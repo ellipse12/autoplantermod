@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "": {
+            "model": "serveradditions:block/auto_planter"
+        }
+    }
+}
