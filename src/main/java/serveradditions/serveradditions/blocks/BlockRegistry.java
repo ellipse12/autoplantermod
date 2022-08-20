@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 public class BlockRegistry {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, ServerAdditions.MOD_ID);
     public static final RegistryObject<Block> AUTO_PLANTER = registerBlock("auto_planter",
-            () -> new AutoPlanterBlock(BlockBehaviour.Properties.of(Material.STONE).noOcclusion()), ModTab.Server_Additions_ModTab);
+            () -> new AutoPlanterBlock(BlockBehaviour.Properties.of(Material.DIRT).strength(2f).noOcclusion()), ModTab.Server_Additions_ModTab);
     public static void register(IEventBus eventBus){
         BLOCKS.register(eventBus);
     }

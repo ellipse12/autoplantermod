@@ -2,6 +2,7 @@ package serveradditions.serveradditions.blocks.entities.added;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.mojang.authlib.properties.Property;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
@@ -31,21 +32,23 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.StemBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.storage.loot.*;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import serveradditions.serveradditions.blocks.added.AutoPlanterBlock;
@@ -53,6 +56,8 @@ import serveradditions.serveradditions.blocks.entities.BlockEntities;
 import serveradditions.serveradditions.screens.AutoPlanterMenu;
 
 import javax.annotation.Nonnull;
+import javax.annotation.PropertyKey;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -61,10 +66,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AutoPlanterBlockEntity extends BlockEntity implements MenuProvider {
     private static boolean isActive;
+
+    private static Block block = Blocks.AIR;
+    private static ItemStack stack = new ItemStack(Items.AIR);
+    TagKey<Item> itemTagKey = ItemTags.create(new ResourceLocation("serveradditions", "recipe_tags"));
+
     private final ItemStackHandler itemHandler = new ItemStackHandler(2){
         @Override
         protected void onContentsChanged(int slot) {
-
+            stack = itemHandler.getStackInSlot(0);
+            block = Block.byItem(stack.getItem());
+            resetProgress();
             setChanged();
         }
     };
@@ -128,6 +140,8 @@ public class AutoPlanterBlockEntity extends BlockEntity implements MenuProvider 
     @Override
     public void onLoad() {
         super.onLoad();
+        stack = this.itemHandler.getStackInSlot(0);
+        block = Block.byItem(stack.getItem());
         lazyItemHandler = LazyOptional.of(() -> itemHandler);
     }
 
@@ -151,38 +165,22 @@ public class AutoPlanterBlockEntity extends BlockEntity implements MenuProvider 
         progress = nbt.getInt("auto_planter.progress");
     }
 
-    public void drops() {
-        SimpleContainer inventory = new SimpleContainer(itemHandler.getSlots());
-        for (int i = 0; i < itemHandler.getSlots(); i++) {
-            inventory.setItem(i, itemHandler.getStackInSlot(i));
-        }
-
-        Containers.dropContents(this.level, this.worldPosition, inventory);
-    }
 
     public void tick() {
-        BlockEntity container =  getNearbyContainer(level, getBlockPos());
-        ItemStack stack = this.itemHandler.getStackInSlot(0);
-        TagKey<Item> itemTagKey = ItemTags.create(new ResourceLocation("forge", "seeds"));
-
-        if( stack.is(itemTagKey) && container != null){
+        BlockEntity container = getNearbyContainer(level, getBlockPos());
+        //ItemStack stack = itemHandler.getStackInSlot(0);
+        //Block block = Block.byItem(stack.getItem());
+        if((stack.is(itemTagKey)) && container != null){
             isActive = true;
         }else{
             isActive = false;
         }
         if(this.itemHandler.getStackInSlot(1).is(Items.DIRT) && isActive){
-            Block block = Block.byItem(stack.getItem());
             this.maxProgress = getMaxTime(block);
-
             this.progress++;
-
-            setChanged(level, getBlockPos(), getBlockState());
             if(this.progress >= this.maxProgress){
                 this.dropLoot(container, block);
-
             }
-        }else{
-            this.resetProgress();
             setChanged(level, getBlockPos(), getBlockState());
         }
 
@@ -193,28 +191,27 @@ public class AutoPlanterBlockEntity extends BlockEntity implements MenuProvider 
     }
 
     private Block getBlockType(Block block){
-        Block block1 = Blocks.AIR;
+        Block stemBlock;
         if (block.getClass() == StemBlock.class) {
-            block1 = ((StemBlock) block).getFruit();
-            return block1;
+            stemBlock = ((StemBlock) block).getFruit();
+            return stemBlock;
         }else{
             return block;
         }
     }
     private BlockState getMaxBlockState(Block block){
-
-
-        BlockState h = block.defaultBlockState();
+        BlockState blockState = block.defaultBlockState();
         if (block.getClass() == StemBlock.class) {
-            h = ((StemBlock) block).getFruit().defaultBlockState();
-        } else if (block.getClass() == CropBlock.class) {
-            h = block.defaultBlockState().setValue(((CropBlock) block).getAgeProperty(), ((CropBlock) block).getMaxAge());
-
+            blockState = ((StemBlock) block).getFruit().defaultBlockState();
         } else {
-            ImmutableList<BlockState> i = block.getStateDefinition().getPossibleStates();
-            h = i.get(i.size() - 1);
-        }
-        return h;
+            blockState = block.defaultBlockState().setValue((IntegerProperty) block.getStateDefinition().getProperty("age"), getMaxAge(block));
+         }
+        return blockState;
+    }
+    private int getMaxAge(Block block){
+        Object[] list = block.getStateDefinition().getProperty("age").getPossibleValues().toArray();
+        int max_age = (int)list[list.length - 1];
+        return max_age;
     }
 
     private int getMaxTime(Block block){
@@ -222,74 +219,45 @@ public class AutoPlanterBlockEntity extends BlockEntity implements MenuProvider 
         if(block.getClass() == CropBlock.class){
             time = ((CropBlock) block).getMaxAge() * 75;
         }else{
-            time = 525;
+            time = getMaxAge(block) * 75;
         }
         return time;
     }
 
+
     private void dropLoot(BlockEntity container, Block block) {
-        ItemStack seed = itemHandler.getStackInSlot(0);
-        Item seedItem = seed.getItem();
         Vec3 position = new Vec3(getBlockPos().getX(), getBlockPos().getY(), getBlockPos().getZ());
-
-        BlockState h = getMaxBlockState(block);
+        BlockState blockState = getMaxBlockState(block);
         Block block1 = getBlockType(block);
-
-
         ResourceLocation lootTableLocation = block1.getLootTable();
-
         MinecraftServer server = level.getServer();
-
         LootTables lootTables = server.getLootTables();
         LootTable lootTable = lootTables.get(lootTableLocation);
-
-
-        ItemStack tool = new ItemStack(Items.IRON_HOE);
-
-        LootContext.Builder ctx = new LootContext.Builder((ServerLevel) level)
+        ItemStack tool = new ItemStack(Items.NETHERITE_HOE);
+        LootContext.Builder builder = new LootContext.Builder((ServerLevel) level)
                 .withParameter(LootContextParams.ORIGIN, position)
-                .withParameter(LootContextParams.BLOCK_STATE, h)
+                .withParameter(LootContextParams.BLOCK_STATE, blockState)
                 .withParameter(LootContextParams.TOOL, tool);
-
-
-        LootContext ctxe = ctx.create(LootContextParamSets.BLOCK);
+        LootContext context = builder.create(LootContextParamSets.BLOCK);
         if (container != null && lootTable != null) {
-            fillContainer(container, lootTable, ctxe);
+            fillContainer(container, lootTable, context);
         }
-
         this.resetProgress();
-
-
     }
 
     private static void fillContainer(BlockEntity container, LootTable lootTable,LootContext lctx) {
         List<ItemStack> generated = lootTable.getRandomItems(lctx);
-
-        AtomicBoolean canBePlaced = new AtomicBoolean(false);
-
-
-
-                container.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(iItemHandler -> {
-                    for (ItemStack itemStack : generated) {
-
-                        if (getRandomNumber(0, 4) == 3) {
-                            break;
-                        } else {
-                            ItemStack remainingStack = ItemHandlerHelper.insertItemStacked(iItemHandler, itemStack, false);
-
-
-                        }
-                    }
-
-                });
+        container.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(iItemHandler -> {
+            for (ItemStack itemStack : generated) {
+                    ItemHandlerHelper.insertItemStacked(iItemHandler, itemStack, false);
+            }
+        });
 
 
 
 
     }
-    public static int getRandomNumber(int min, int max) {
-        return (int) ((Math.random() * (max - min)) + min);
-    }
+
 
 
 

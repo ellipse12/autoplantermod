@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import serveradditions.serveradditions.blocks.BlockRegistry;
 import serveradditions.serveradditions.blocks.entities.BlockEntities;
 import serveradditions.serveradditions.items.ItemRegistry;
+import serveradditions.serveradditions.items.added.lootbagstuff.LootBagItem;
 import serveradditions.serveradditions.screens.AutoPlanterScreen;
 import serveradditions.serveradditions.screens.MenuTypes;
 
