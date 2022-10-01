@@ -27,7 +27,7 @@ public class AutoPlanterMenu extends AbstractContainerMenu {
     }
     public AutoPlanterMenu(int pContainerId, Inventory inv, BlockEntity entity, ContainerData data) {
         super(MenuTypes.AUTO_PLANTER_MENU.get(), pContainerId);
-        checkContainerSize(inv, 2);
+        checkContainerSize(inv, 3);
         blockEntity = ((AutoPlanterBlockEntity) entity);
         this.level = inv.player.level;
         this.data = data;
@@ -35,8 +35,9 @@ public class AutoPlanterMenu extends AbstractContainerMenu {
         addPlayerHotbar(inv);
 
         this.blockEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(handler -> {
-            this.addSlot(new SlotItemHandler(handler, 0, 62, 19));
-            this.addSlot(new SlotItemHandler(handler, 1, 62, 43));
+            this.addSlot(new SlotItemHandler(handler, 0, 80, 19));
+            this.addSlot(new SlotItemHandler(handler, 1, 80, 43));
+            this.addSlot(new SlotItemHandler(handler, 2, 116, 43));
 
         });
         addDataSlots(data);
@@ -71,7 +72,7 @@ public class AutoPlanterMenu extends AbstractContainerMenu {
     private static final int TE_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
 
     // THIS YOU HAVE TO DEFINE!
-    private static final int TE_INVENTORY_SLOT_COUNT = 2;  // must be the number of slots you have!
+    private static final int TE_INVENTORY_SLOT_COUNT = 3;  // must be the number of slots you have!
 
     @Override
     public ItemStack quickMoveStack(Player playerIn, int index) {

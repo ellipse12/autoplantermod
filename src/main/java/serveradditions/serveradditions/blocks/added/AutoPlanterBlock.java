@@ -75,7 +75,7 @@
                 if (pState.getBlock() != pNewState.getBlock()) {
                     BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
                     if (blockEntity instanceof AutoPlanterBlockEntity planterBlockEntity) {
-
+                        ((AutoPlanterBlockEntity)(blockEntity)).drops();
                     }
                 }
                 super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
@@ -109,5 +109,6 @@
                 return pLevel.isClientSide() ? null : ((pLevel1, pPos, pState1, pBlockEntity) -> {
                     ((AutoPlanterBlockEntity) pBlockEntity).tick();
                 });
+
             }
         }

@@ -2,7 +2,6 @@ package serveradditions.serveradditions.blocks.entities.added;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.mojang.authlib.properties.Property;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
@@ -36,6 +35,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.storage.loot.*;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
@@ -51,8 +51,10 @@ import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import serveradditions.serveradditions.ServerAdditions;
 import serveradditions.serveradditions.blocks.added.AutoPlanterBlock;
 import serveradditions.serveradditions.blocks.entities.BlockEntities;
+import serveradditions.serveradditions.items.ItemRegistry;
 import serveradditions.serveradditions.screens.AutoPlanterMenu;
 
 import javax.annotation.Nonnull;
@@ -67,19 +69,23 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class AutoPlanterBlockEntity extends BlockEntity implements MenuProvider {
     private static boolean isActive;
 
-    private static Block block = Blocks.AIR;
+    private Block block = Blocks.AIR;
     private static ItemStack stack = new ItemStack(Items.AIR);
+    private int timeComponent = 100;
+
     TagKey<Item> itemTagKey = ItemTags.create(new ResourceLocation("serveradditions", "recipe_tags"));
 
-    private final ItemStackHandler itemHandler = new ItemStackHandler(2){
+    private final ItemStackHandler itemHandler = new ItemStackHandler(3){
         @Override
         protected void onContentsChanged(int slot) {
             stack = itemHandler.getStackInSlot(0);
             block = Block.byItem(stack.getItem());
+
             resetProgress();
             setChanged();
         }
     };
+
 
 
 
@@ -92,6 +98,7 @@ public class AutoPlanterBlockEntity extends BlockEntity implements MenuProvider 
 
     public AutoPlanterBlockEntity(BlockPos pWorldPosition, BlockState pBlockState) {
         super(BlockEntities.AUTO_PLANTER_BLOCK_ENTITY.get(), pWorldPosition, pBlockState);
+
         this.data = new ContainerData() {
             public int get(int index) {
                 switch (index) {
@@ -141,7 +148,8 @@ public class AutoPlanterBlockEntity extends BlockEntity implements MenuProvider 
     public void onLoad() {
         super.onLoad();
         stack = this.itemHandler.getStackInSlot(0);
-        block = Block.byItem(stack.getItem());
+        this.block = Block.byItem(stack.getItem());
+
         lazyItemHandler = LazyOptional.of(() -> itemHandler);
     }
 
@@ -164,25 +172,43 @@ public class AutoPlanterBlockEntity extends BlockEntity implements MenuProvider 
         itemHandler.deserializeNBT(nbt.getCompound("inventory"));
         progress = nbt.getInt("auto_planter.progress");
     }
+    public void drops() {
+        SimpleContainer inventory = new SimpleContainer(itemHandler.getSlots());
+        for (int i = 0; i < itemHandler.getSlots(); i++) {
+            inventory.setItem(i, itemHandler.getStackInSlot(i));
+        }
+
+        Containers.dropContents(this.level, this.worldPosition, inventory);
+    }
 
 
     public void tick() {
-        BlockEntity container = getNearbyContainer(level, getBlockPos());
-        //ItemStack stack = itemHandler.getStackInSlot(0);
-        //Block block = Block.byItem(stack.getItem());
-        if((stack.is(itemTagKey)) && container != null){
+        BlockEntity container = getNearbyContainer(this.level, this.getBlockPos());
+        stack = this.itemHandler.getStackInSlot(0);
+
+        if((stack.is(itemTagKey)) && this.block != null && container != null){
             isActive = true;
         }else{
+            this.resetProgress();
             isActive = false;
         }
+
         if(this.itemHandler.getStackInSlot(1).is(Items.DIRT) && isActive){
-            this.maxProgress = getMaxTime(block);
+            this.block = Block.byItem(stack.getItem());
+            if(this.itemHandler.getStackInSlot(2).is(ItemRegistry.UPGRADE_ITEM.get())){
+                this.timeComponent = 50;
+            }else{
+                this.timeComponent = 100;
+            }
+            this.maxProgress = this.getMaxTime(block);
             this.progress++;
+            setChanged(this.level, container.getBlockPos(), container.getBlockState());
             if(this.progress >= this.maxProgress){
                 this.dropLoot(container, block);
             }
-            setChanged(level, getBlockPos(), getBlockState());
+
         }
+
 
 
     }
@@ -209,17 +235,23 @@ public class AutoPlanterBlockEntity extends BlockEntity implements MenuProvider 
         return blockState;
     }
     private int getMaxAge(Block block){
-        Object[] list = block.getStateDefinition().getProperty("age").getPossibleValues().toArray();
-        int max_age = (int)list[list.length - 1];
+        int max_age = 7;
+        Object[] list = new Object[0];
+        Property<?> property = block.getStateDefinition().getProperty("age");
+        if(property != null){
+            list = property.getPossibleValues().toArray();
+        }
+
+        max_age = (int)list[list.length - 1];
         return max_age;
     }
 
     private int getMaxTime(Block block){
         int time = 525;
         if(block.getClass() == CropBlock.class){
-            time = ((CropBlock) block).getMaxAge() * 75;
+            time = ((CropBlock) block).getMaxAge() * this.timeComponent;
         }else{
-            time = getMaxAge(block) * 75;
+            time = getMaxAge(block) * this.timeComponent;
         }
         return time;
     }

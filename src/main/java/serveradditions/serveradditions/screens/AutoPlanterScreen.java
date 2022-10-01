@@ -28,7 +28,7 @@ public class AutoPlanterScreen extends AbstractContainerScreen<AutoPlanterMenu> 
 
         this.blit(pPoseStack, x, y, 0, 0, imageWidth, imageHeight);
         if(menu.isCrafting()) {
-            blit(pPoseStack, x + 82, y + 26, 176, 0, 12, menu.getScaledProgress());
+            blit(pPoseStack, x + 100, y + 26, 176, 0, 12, menu.getScaledProgress());
         }
     }
 
