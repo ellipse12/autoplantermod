@@ -6,4 +6,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'serveradditions'
+rootProject.name = 'AutoPlanterMod-1.18.2'

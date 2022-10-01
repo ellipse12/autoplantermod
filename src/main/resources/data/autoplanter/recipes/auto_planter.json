@@ -1,0 +1,26 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "iRi",
+        "cFc",
+        "iRi"
+    ],
+    "key": {
+        "i": {
+            "item": "minecraft:iron_ingot"
+        },
+        "R": {
+            "item": "minecraft:redstone"
+        },
+        "c": {
+            "item": "minecraft:copper_ingot"
+        },
+        "F": {
+            "item": "minecraft:flower_pot"
+        }
+    },
+    "result": {
+        "item": "autoplanter:auto_planter",
+        "count": 1
+    }
+}
