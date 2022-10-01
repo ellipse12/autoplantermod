@@ -1,0 +1,1 @@
+{"type":"minecraft:block","pools":[{"rolls":1,"bonus_rolls":1,"entries":[{"type":"minecraft:item","name":"mysticalagriculture:coal_essence"}]},{"rolls":1,"bonus_rolls":1,"entries":[{"type":"minecraft:item","name":"mysticalagriculture:coal_seeds"}],"conditions":[{"condition":"minecraft:random_chance","chance":0.1}]}]}
