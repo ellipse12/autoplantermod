@@ -29,7 +29,7 @@ public class RecipeItemTags extends ItemTagsProvider {
                 tag(itemTagKey).add(block.asItem());
             }
         }
-        tag(itemTagKey).add(Items.SUGAR_CANE);
+        tag(itemTagKey).add(Items.SUGAR_CANE).addTag(ItemTags.create(new ResourceLocation("forge", "seeds")));
         TagKey<Item> mysticalAgricultureTagKey = ItemTags.create(new ResourceLocation("mysticalagriculture", "seeds"));
         if(AutoPlanter.mysticalAgricultureInstalled){
             tag(itemTagKey).addTag(mysticalAgricultureTagKey);
