@@ -8,12 +8,18 @@ import autoplanter.screens.MenuTypes;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.common.ForgeConfig;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.fml.ModLoadingState;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.core.util.Loader;
 import org.slf4j.Logger;
 
@@ -38,9 +44,9 @@ public class AutoPlanter {
         BlockEntities.register(eventBus);
         MenuTypes.register(eventBus);
 
-
+        mysticalAgricultureInstalled = ModList.get().isLoaded("mysticalagriculture");
         MinecraftForge.EVENT_BUS.register(this);
-        mysticalAgricultureInstalled = Loader.isClassAvailable("MysticalAgriculture");
+
 
     }
 
@@ -54,6 +60,7 @@ public class AutoPlanter {
 
         LOGGER.info("HELLO FROM PREINIT");
         LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
+
     }
 
 

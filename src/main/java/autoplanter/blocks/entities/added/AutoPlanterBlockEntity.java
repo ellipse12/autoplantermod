@@ -222,7 +222,7 @@ public class AutoPlanterBlockEntity extends BlockEntity implements MenuProvider 
     }
 
     private int getMaxTime(Block block){
-        int time = 525;
+        int time = 7 * this.timeComponent;
         if(block.getClass() == CropBlock.class){
             time = ((CropBlock) block).getMaxAge() * this.timeComponent;
         }else{
