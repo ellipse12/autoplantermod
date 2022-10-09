@@ -1,4 +1,4 @@
-package autoplanter.datagen;
+package autoplanter.datagen.tags;
 
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.BlockTagsProvider;

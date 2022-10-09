@@ -1,12 +1,6 @@
 {
   "replace": false,
   "values": [
-    "minecraft:wheat_seeds",
-    "minecraft:pumpkin_seeds",
-    "minecraft:melon_seeds",
-    "minecraft:carrot",
-    "minecraft:potato",
-    "minecraft:beetroot_seeds",
     "minecraft:sugar_cane",
     "#forge:seeds"
   ]

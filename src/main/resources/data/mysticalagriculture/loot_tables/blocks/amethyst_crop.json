@@ -1,1 +1,0 @@
-{"type":"minecraft:block","pools":[{"rolls":1,"bonus_rolls":1,"entries":[{"type":"minecraft:item","name":"mysticalagriculture:amethyst_essence"}]},{"rolls":1,"bonus_rolls":1,"entries":[{"type":"minecraft:item","name":"mysticalagriculture:amethyst_seeds"}],"conditions":[{"condition":"minecraft:random_chance","chance":0.1}]}]}

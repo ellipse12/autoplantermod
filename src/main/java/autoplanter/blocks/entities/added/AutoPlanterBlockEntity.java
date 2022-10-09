@@ -3,6 +3,7 @@ package autoplanter.blocks.entities.added;
 import autoplanter.blocks.entities.BlockEntities;
 import autoplanter.items.ItemRegistry;
 import autoplanter.screens.AutoPlanterMenu;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -42,6 +43,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import autoplanter.AutoPlanter;
@@ -159,6 +161,7 @@ public class AutoPlanterBlockEntity extends BlockEntity implements MenuProvider 
     public void tick() {
         BlockEntity container = getNearbyContainer(this.level, this.getBlockPos());
         stack = this.itemHandler.getStackInSlot(0);
+
         if((stack.is(itemTagKey)) && this.block != null && container != null){
             isActive = true;
         }else{
@@ -197,6 +200,7 @@ public class AutoPlanterBlockEntity extends BlockEntity implements MenuProvider 
 
     private BlockState getMaxBlockState(Block block){
         BlockState blockState = block.defaultBlockState();
+
         if (block.getClass() == StemBlock.class) {
             blockState = ((StemBlock) block).getFruit().defaultBlockState();
         } else {
