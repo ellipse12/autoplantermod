@@ -9,6 +9,7 @@ import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -20,10 +21,9 @@ public class MALootTables extends LootTableProvider {
     public MALootTables(DataGenerator pGenerator) {
         super(pGenerator);
     }
-
     @Override
-    protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext validationtracker) {
-        map.forEach((location, lootTable) -> LootTables.validate(validationtracker, location, lootTable));
+    protected void validate(Map<ResourceLocation, LootTable> map, @NotNull ValidationContext validationTracker) {
+        map.forEach((location, lootTable) -> LootTables.validate(validationTracker, location, lootTable));
     }
 
     @Override

@@ -16,10 +16,6 @@ public class ItemRegistry {
 
     public static final RegistryObject<Item> UPGRADE_ITEM = ITEMS.register("upgrade", () -> new Item(new Item.Properties().tab(ModTab.Auto_Planter_ModTab)));
 
-
-
-
-
     public static void register(IEventBus eventBus){
         ITEMS.register(eventBus);
     }

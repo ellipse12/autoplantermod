@@ -34,6 +34,7 @@
             private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 15.9, 16);
 
             @Override
+            @SuppressWarnings("deprecation")
             public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
                 return SHAPE;
             }
@@ -44,11 +45,13 @@
             }
 
             @Override
+            @SuppressWarnings("deprecation")
             public BlockState rotate(BlockState pState, Rotation pRotation) {
                 return pState.setValue(FACING, pRotation.rotate(pState.getValue(FACING)));
             }
 
             @Override
+            @SuppressWarnings("deprecation")
             public BlockState mirror(BlockState pState, Mirror pMirror) {
                 return pState.rotate(pMirror.getRotation(pState.getValue(FACING)));
             }
@@ -59,11 +62,13 @@
             }
 
             @Override
+            @SuppressWarnings("deprecation")
             public RenderShape getRenderShape(BlockState pState) {
                 return RenderShape.MODEL;
             }
 
             @Override
+            @SuppressWarnings("deprecation")
             public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
                 if (pState.getBlock() != pNewState.getBlock()) {
                     BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
@@ -75,6 +80,7 @@
             }
 
             @Override
+            @SuppressWarnings("deprecation")
             public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos,
                                          Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
                 if (!pLevel.isClientSide()) {

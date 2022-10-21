@@ -11,14 +11,14 @@ import net.minecraftforge.registries.RegistryObject;
 import autoplanter.AutoPlanter;
 
 public class MenuTypes {
-    public static final DeferredRegister<MenuType<?>> MENUS =
-            DeferredRegister.create(ForgeRegistries.CONTAINERS, AutoPlanter.MOD_ID);
+
+    public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.CONTAINERS, AutoPlanter.MOD_ID);
+
     public static final RegistryObject<MenuType<AutoPlanterMenu>> AUTO_PLANTER_MENU =  registerMenuType(AutoPlanterMenu::new, "auto_planter_menu");
-    private static <T extends AbstractContainerMenu>RegistryObject<MenuType<T>> registerMenuType(IContainerFactory<T> factory
-    , String name){
+
+    private static <T extends AbstractContainerMenu>RegistryObject<MenuType<T>> registerMenuType(IContainerFactory<T> factory, String name){
         return MENUS.register(name, () -> IForgeMenuType.create(factory));
     }
-
 
     public static void register(IEventBus eventBus){
         MENUS.register(eventBus);
