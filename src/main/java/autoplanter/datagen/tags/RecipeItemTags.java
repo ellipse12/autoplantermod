@@ -32,7 +32,7 @@ public class RecipeItemTags extends ItemTagsProvider {
 
     @Override
     protected void addTags() {
-        tag(itemTagKey).add(Items.SUGAR_CANE).addTag(ItemTags.create(new ResourceLocation("forge", "seeds")));
+        tag(itemTagKey).add(Items.COCOA_BEANS).add(Items.SUGAR_CANE).addTag(ItemTags.create(new ResourceLocation("forge", "seeds")));
        if(AutoPlanter.isMAInstalled){
            for(Item item : MysticalAgricultureAPI.getCropRegistry().getCrops().stream().map(Crop::getSeedsItem).toList()){
                tag(itemTagKey).add(item);
