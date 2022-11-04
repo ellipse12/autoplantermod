@@ -2,6 +2,7 @@
         package autoplanter.blocks.added;
 
 
+        import autoplanter.blocks.entities.added.AutoPlanterBlockEntity;
         import net.minecraft.core.BlockPos;
         import net.minecraft.server.level.ServerPlayer;
         import net.minecraft.world.InteractionHand;
@@ -22,7 +23,6 @@
         import net.minecraft.world.phys.shapes.VoxelShape;
         import net.minecraftforge.network.NetworkHooks;
         import org.jetbrains.annotations.Nullable;
-        import autoplanter.blocks.entities.added.AutoPlanterBlockEntity;
 
         public class AutoPlanterBlock extends BaseEntityBlock {
             public static final DirectionProperty FACING = DirectionalBlock.FACING;
@@ -86,7 +86,7 @@
                 if (!pLevel.isClientSide()) {
                     BlockEntity entity = pLevel.getBlockEntity(pPos);
                     if (entity instanceof AutoPlanterBlockEntity) {
-                        NetworkHooks.openGui(((ServerPlayer) pPlayer), (AutoPlanterBlockEntity) entity, pPos);
+                        NetworkHooks.openScreen(((ServerPlayer) pPlayer), (AutoPlanterBlockEntity) entity, pPos);
                     } else {
                         throw new IllegalStateException("Our Container provider is missing!");
                     }

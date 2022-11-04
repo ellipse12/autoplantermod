@@ -1,13 +1,12 @@
 package autoplanter.blocks.entities.added;
 
+import autoplanter.AutoPlanter;
 import autoplanter.blocks.entities.BlockEntities;
 import autoplanter.items.ItemRegistry;
 import autoplanter.screens.AutoPlanterMenu;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -33,20 +32,20 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.level.storage.loot.*;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import autoplanter.AutoPlanter;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -103,10 +102,7 @@ public class AutoPlanterBlockEntity extends BlockEntity implements MenuProvider 
         };
     }
 
-    @Override
-    public Component getDisplayName() {
-        return new TextComponent("Auto Planter");
-    }
+
 
     @Nullable
     @Override
@@ -116,7 +112,7 @@ public class AutoPlanterBlockEntity extends BlockEntity implements MenuProvider 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap) {
-        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (cap == ForgeCapabilities.ITEM_HANDLER) {
             return lazyItemHandler.cast();
         }
         return super.getCapability(cap);
@@ -257,7 +253,7 @@ public class AutoPlanterBlockEntity extends BlockEntity implements MenuProvider 
 
     private static void fillContainer(BlockEntity container, LootTable lootTable,LootContext lctx) {
         List<ItemStack> generated = lootTable.getRandomItems(lctx);
-        container.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(iItemHandler -> {
+        container.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
             for (ItemStack itemStack : generated) {
                     ItemHandlerHelper.insertItemStacked(iItemHandler, itemStack, false);
             }
@@ -273,4 +269,8 @@ public class AutoPlanterBlockEntity extends BlockEntity implements MenuProvider 
         return null;
     }
 
+    @Override
+    public Component getDisplayName() {
+        return Component.literal("Auto Planter");
+    }
 }

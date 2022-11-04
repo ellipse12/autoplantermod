@@ -1,5 +1,6 @@
 package autoplanter.screens;
 
+import autoplanter.AutoPlanter;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.extensions.IForgeMenuType;
@@ -8,11 +9,10 @@ import net.minecraftforge.network.IContainerFactory;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-import autoplanter.AutoPlanter;
 
-public class MenuTypes {
+public class ModMenuTypes {
 
-    public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.CONTAINERS, AutoPlanter.MOD_ID);
+    public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, AutoPlanter.MOD_ID);
 
     public static final RegistryObject<MenuType<AutoPlanterMenu>> AUTO_PLANTER_MENU =  registerMenuType(AutoPlanterMenu::new, "auto_planter_menu");
 

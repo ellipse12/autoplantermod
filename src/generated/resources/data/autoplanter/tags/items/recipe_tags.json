@@ -1,8 +1,7 @@
 {
-  "replace": false,
   "values": [
+    "minecraft:cocoa_beans",
     "minecraft:sugar_cane",
-    "#forge:seeds",
-    "minecraft:cocoa_beans"
+    "#forge:seeds"
   ]
 }

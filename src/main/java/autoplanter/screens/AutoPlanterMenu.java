@@ -1,6 +1,7 @@
 package autoplanter.screens;
 
 import autoplanter.blocks.BlockRegistry;
+import autoplanter.blocks.entities.added.AutoPlanterBlockEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -8,9 +9,8 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.SlotItemHandler;
-import autoplanter.blocks.entities.added.AutoPlanterBlockEntity;
 
 public class AutoPlanterMenu extends AbstractContainerMenu {
 
@@ -25,14 +25,14 @@ public class AutoPlanterMenu extends AbstractContainerMenu {
     }
 
     public AutoPlanterMenu(int pContainerId, Inventory inv, BlockEntity entity, ContainerData data) {
-        super(MenuTypes.AUTO_PLANTER_MENU.get(), pContainerId);
+        super(ModMenuTypes.AUTO_PLANTER_MENU.get(), pContainerId);
         checkContainerSize(inv, 3);
         blockEntity = ((AutoPlanterBlockEntity) entity);
         this.level = inv.player.level;
         this.data = data;
         addPlayerInventory(inv);
         addPlayerHotbar(inv);
-        this.blockEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(handler -> {
+        this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(handler -> {
             this.addSlot(new SlotItemHandler(handler, 0, 80, 19));
             this.addSlot(new SlotItemHandler(handler, 1, 80, 43));
             this.addSlot(new SlotItemHandler(handler, 2, 116, 43));
