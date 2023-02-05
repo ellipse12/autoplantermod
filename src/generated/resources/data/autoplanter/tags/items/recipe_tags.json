@@ -2,6 +2,12 @@
   "values": [
     "minecraft:cocoa_beans",
     "minecraft:sugar_cane",
-    "#forge:seeds"
+    "#forge:seeds",
+    "minecraft:wheat_seeds",
+    "minecraft:pumpkin_seeds",
+    "minecraft:melon_seeds",
+    "minecraft:carrot",
+    "minecraft:potato",
+    "minecraft:beetroot_seeds"
   ]
 }

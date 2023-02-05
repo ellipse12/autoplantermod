@@ -1,43 +1,47 @@
 package autoplanter.datagen.tags;
 
-import com.blakebr0.mysticalagriculture.MysticalAgriculture;
+import autoplanter.AutoPlanter;
 import com.blakebr0.mysticalagriculture.api.MysticalAgricultureAPI;
-import com.blakebr0.mysticalagriculture.api.crop.Crop;
-import net.minecraft.client.Minecraft;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.tags.BlockTagsProvider;
-import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CropBlock;
-import net.minecraft.world.level.block.MelonBlock;
 import net.minecraft.world.level.block.StemBlock;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
-import autoplanter.AutoPlanter;
 
-public class RecipeItemTags extends ItemTagsProvider {
+import java.util.concurrent.CompletableFuture;
 
+public class RecipeItemTags extends TagsProvider<Item> {
+    private final PackOutput output;
     private TagKey<Item> itemTagKey = ItemTags.create(new ResourceLocation(AutoPlanter.MOD_ID, "recipe_tags"));
 
-    public RecipeItemTags(DataGenerator pGenerator, BlockTagsProvider pBlockTagsProvider, String modId, @Nullable ExistingFileHelper existingFileHelper) {
-        super(pGenerator, pBlockTagsProvider, modId, existingFileHelper);
+    public RecipeItemTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookup, String modId, @Nullable ExistingFileHelper existingFileHelper) {
+        super(output, ForgeRegistries.Keys.ITEMS, lookup, modId, existingFileHelper);
+        this.output = output;
     }
 
     @Override
-    protected void addTags() {
-        tag(itemTagKey).add(Items.COCOA_BEANS).add(Items.SUGAR_CANE).addTag(ItemTags.create(new ResourceLocation("forge", "seeds")));
-       if(AutoPlanter.isMAInstalled){
-           for(Item item : MysticalAgricultureAPI.getCropRegistry().getCrops().stream().map(Crop::getSeedsItem).toList()){
-               tag(itemTagKey).add(item);
-           }
-       }
+    public void addTags(HolderLookup.Provider pProvider) {
+        this.tag(itemTagKey).add(ForgeRegistries.ITEMS.getResourceKey(Items.COCOA_BEANS).get()).add(ForgeRegistries.ITEMS.getResourceKey(Items.SUGAR_CANE).get()).addTag(ItemTags.create(new ResourceLocation("forge", "seeds")));
+        for(Block block : ForgeRegistries.BLOCKS.getValues()){
+            if(block instanceof CropBlock || block instanceof StemBlock){
+                this.tag(itemTagKey).add(ForgeRegistries.ITEMS.getResourceKey(Item.byBlock(block)).get());
+            }
+        }
+        if(AutoPlanter.isMAInstalled){
+            for(var item: MysticalAgricultureAPI.getCropRegistry().getCrops()){
+                var seed = ForgeRegistries.ITEMS.getResourceKey(item.getSeedsItem()).get();
+                tag(itemTagKey).add(seed);
+            }
+        }
     }
 
     @Override
