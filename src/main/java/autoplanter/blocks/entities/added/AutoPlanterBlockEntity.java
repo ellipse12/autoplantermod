@@ -2,6 +2,7 @@ package autoplanter.blocks.entities.added;
 
 import autoplanter.AutoPlanter;
 import autoplanter.blocks.entities.BlockEntities;
+import autoplanter.config.AutoPlanterConfig;
 import autoplanter.items.ItemRegistry;
 import autoplanter.screens.AutoPlanterMenu;
 import net.minecraft.core.BlockPos;
@@ -57,7 +58,7 @@ public class AutoPlanterBlockEntity extends BlockEntity implements MenuProvider 
 
     private static ItemStack stack = new ItemStack(Items.AIR);
 
-    private int timeComponent = 100;
+    private int timeComponent = AutoPlanterConfig.timeMultiplier.get();
 
     TagKey<Item> itemTagKey = ItemTags.create(new ResourceLocation(AutoPlanter.MOD_ID, "recipe_tags"));
 
@@ -168,9 +169,9 @@ public class AutoPlanterBlockEntity extends BlockEntity implements MenuProvider 
         if(this.itemHandler.getStackInSlot(1).is(Items.DIRT) && isActive){
             this.block = Block.byItem(stack.getItem());
             if(this.itemHandler.getStackInSlot(2).is(ItemRegistry.UPGRADE_ITEM.get())){
-                this.timeComponent = 50;
+                this.timeComponent = (int) (AutoPlanterConfig.upgradeMultiplier.get() * AutoPlanterConfig.timeMultiplier.get());
             }else{
-                this.timeComponent = 100;
+                this.timeComponent = AutoPlanterConfig.timeMultiplier.get();
             }
             this.maxProgress = this.getMaxTime(block);
             this.progress++;

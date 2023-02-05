@@ -1,18 +1,24 @@
 package autoplanter.datagen.tags;
 
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.tags.BlockTagsProvider;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.tags.TagsProvider;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockTags extends BlockTagsProvider {
+import java.util.concurrent.CompletableFuture;
 
-    public BlockTags(DataGenerator pGenerator, String modId, @Nullable ExistingFileHelper existingFileHelper) {
-        super(pGenerator, modId, existingFileHelper);
+public class BlockTags extends TagsProvider<Block> {
+
+
+    protected BlockTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookup, String modId, @Nullable ExistingFileHelper existingFileHelper) {
+        super(output, ForgeRegistries.Keys.BLOCKS, lookup, modId, existingFileHelper);
     }
 
     @Override
-    public String getName() {
-        return "Recipe Tags";
+    protected void addTags(HolderLookup.Provider pProvider) {
+
     }
 }

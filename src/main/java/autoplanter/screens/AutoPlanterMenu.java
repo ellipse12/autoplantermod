@@ -14,11 +14,11 @@ import net.minecraftforge.items.SlotItemHandler;
 
 public class AutoPlanterMenu extends AbstractContainerMenu {
 
-    private final AutoPlanterBlockEntity blockEntity;
+    private  AutoPlanterBlockEntity blockEntity;
 
     private final Level level;
 
-    private final ContainerData data;
+    private  ContainerData data;
 
     public AutoPlanterMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
         this(pContainerId, inv, inv.player.level.getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(2));

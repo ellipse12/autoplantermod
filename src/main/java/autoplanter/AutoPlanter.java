@@ -2,6 +2,7 @@ package autoplanter;
 
 import autoplanter.blocks.BlockRegistry;
 import autoplanter.blocks.entities.BlockEntities;
+import autoplanter.config.AutoPlanterConfig;
 import autoplanter.items.ItemRegistry;
 import autoplanter.screens.AutoPlanterScreen;
 import autoplanter.screens.ModMenuTypes;
@@ -10,7 +11,9 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -39,8 +42,9 @@ public class AutoPlanter {
         BlockEntities.register(bus);
         ModMenuTypes.register(bus);
         isMAInstalled = ModList.get().isLoaded("mysticalagriculture");
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, AutoPlanterConfig.GENERAL_SPEC, "auto_planter_config.toml");
         MinecraftForge.EVENT_BUS.register(this);
-
+        bus.addListener(ModTab::addCreative);
 
 
 
